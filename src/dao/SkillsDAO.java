@@ -2,6 +2,7 @@ package dao;
 
 import model.Skills;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,8 +16,7 @@ public class SkillsDAO extends AbstractDAO<Skills, Integer> {
         }
     }
 
-    public SkillsDAO() {
-        //super(connection);
+    public SkillsDAO(Connection connection) {
         super(connection);
     }
 
@@ -33,22 +33,17 @@ public class SkillsDAO extends AbstractDAO<Skills, Integer> {
 
     @Override
     public String getUpdateQuery() {
-        return "UPDATE INTO " + Skills.TABLE_NAME + " SET title = ?\n"+
+        return "UPDATE " + Skills.TABLE_NAME + " SET title = ?\n"+
                 "WHERE id = ?;";
     }
 
     @Override
     public String getDeleteQuery() {
-        return "DELETE FROM" + Skills.TABLE_NAME+"\n"+
+        return "DELETE FROM " + Skills.TABLE_NAME+"\n"+
                 "WHERE id = ?;";
 
     }
 
-    @Override
-    public Skills create() throws SQLException {
-        Skills skills = new Skills();
-        return insert(skills);
-    }
 
     @Override
     protected List<Skills> parseResultSet(ResultSet rs) throws SQLException {

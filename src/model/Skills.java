@@ -3,7 +3,7 @@ package model;
 import dao.IdentifiedTable;
 
 public class Skills implements IdentifiedTable<Integer> {
-    public static final String TABLE_NAME = "Skills";
+    public static final String TABLE_NAME = "skills";
     public static final String ID_COLUMN = "id";
     public static final String TITLE_COLUMN = "title";
 
@@ -11,6 +11,10 @@ public class Skills implements IdentifiedTable<Integer> {
     private String title;
 
     public Skills() {
+    }
+
+    public Skills(Integer id) {
+        this.id = id;
     }
 
     public Skills(Integer id, String title) {
@@ -38,8 +42,7 @@ public class Skills implements IdentifiedTable<Integer> {
     public String toString() {
         return "Skills:" +
                 "\nid = " + this.id +
-                ",\ntitle = " +
-                this.title;
+                ",\ntitle = " + this.title;
     }
 
 }

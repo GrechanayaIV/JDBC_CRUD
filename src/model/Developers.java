@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Developers implements IdentifiedTable<Integer> {
-    public static final String TABLE_NAME = "Developers";
+    public static final String TABLE_NAME = "developers";
     public static final String ID_COLUMN = "id";
     public static final String FNAME_COLUMN = "fname";
     public static final String LNAME_COLUMN = "lname";
@@ -16,28 +16,22 @@ public class Developers implements IdentifiedTable<Integer> {
     private String fname;
     private String lname;
     private int salary;
-    private Companies company;
-    private Projects project;
     private Set<Skills> skills = new HashSet<Skills>();
 
-    public Developers(){
+    public Developers() {
 
     }
+
+    public Developers(Integer id) {
+        this.id = id;
+    }
+
 
     public Developers(Integer id, String fname, String lname, int salary) {
         this.id = id;
         this.fname = fname;
         this.lname = lname;
         this.salary = salary;
-    }
-
-    public Developers(Integer id, String fname, String lname, int salary, Companies company, Projects project) {
-        this.id = id;
-        this.fname = fname;
-        this.lname = lname;
-        this.salary = salary;
-        this.company = company;
-        this.project = project;
     }
 
     public Integer getId() {
@@ -56,7 +50,9 @@ public class Developers implements IdentifiedTable<Integer> {
         return salary;
     }
 
-    public Set<Skills> getSkills() { return skills; }
+    public Set<Skills> getSkills() {
+        return skills;
+    }
 
     public void setId(Integer id) {
         this.id = id;
@@ -81,13 +77,10 @@ public class Developers implements IdentifiedTable<Integer> {
     @Override
     public String toString() {
         return "Developers:" +
-                "\nid = "+ this.id +
-                ",\nfname = "+this.fname +
-                ",\nlname = "+ this.lname +
-                ",\nsalary = "+ this.salary+
-                ",\ncompany=" + company +
-                ",\nproject=" + project +
-                ",\nskills=" + skills;
+                "\nid = " + this.id +
+                ",\nfname = " + this.fname +
+                ",\nlname = " + this.lname +
+                ",\nsalary = " + this.salary;
     }
 
 }

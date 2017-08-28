@@ -12,7 +12,7 @@ public abstract class AbstractDAO<T extends IdentifiedTable<PK>, PK> implements 
     Connection connection ;
 
     public AbstractDAO(Connection connection) {
-        this.connection = this.connection;
+        this.connection = connection;
     }
 
     public abstract String getSelectQuery();
@@ -34,7 +34,7 @@ public abstract class AbstractDAO<T extends IdentifiedTable<PK>, PK> implements 
 
         List<T> list = null;
         String sql = getSelectQuery();
-        sql += "WHERE id = ?";
+        sql += " WHERE id = ?";
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, id);
@@ -69,7 +69,7 @@ public abstract class AbstractDAO<T extends IdentifiedTable<PK>, PK> implements 
             throw new RuntimeException(e);
         }
         // Получаем только что вставленную запись
-        sql = getSelectQuery() + " WHERE id = last_insert_id();";
+        sql = getSelectQuery() + " WHERE id = "+ entity.getId();
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet rs = statement.executeQuery();
@@ -104,8 +104,8 @@ public abstract class AbstractDAO<T extends IdentifiedTable<PK>, PK> implements 
     public void update(T entity) throws SQLException {
         String sql = getUpdateQuery();
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);) {
-            prepareStatementForUpdate(statement, entity); // заполнение аргументов запроса оставим на совесть потомков
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            prepareStatementForUpdate(statement, entity);
             int count = statement.executeUpdate();
             if (count != 1) {
                 throw new RuntimeException("On update modify more then 1 record: " + count);
@@ -123,7 +123,7 @@ public abstract class AbstractDAO<T extends IdentifiedTable<PK>, PK> implements 
             try {
                 statement.setObject(1, entity.getId());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                throw new RuntimeException(e);
             }
             int count = statement.executeUpdate();
             if (count != 1) {

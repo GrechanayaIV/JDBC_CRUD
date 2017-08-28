@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class ProjectsDAO extends AbstractDAO<Projects, Integer> {
     private class PersistProjects extends Projects{
@@ -24,38 +25,36 @@ public class ProjectsDAO extends AbstractDAO<Projects, Integer> {
     }
     @Override
     public String getSelectQuery() {
-        return "SELECT id, title FROM " + Projects.TABLE_NAME;
+        return "SELECT * FROM " + Projects.TABLE_NAME;
     }
 
     @Override
     public String getCreateQuery() {
-        return "INSERT INTO "+ Projects.TABLE_NAME+" ( id, title, cost)\n"+
+        return "INSERT INTO "+ Projects.TABLE_NAME+" ( " + Projects.ID_COLUMN +
+                ", " + Projects.TITLE_COLUMN + ", " + Projects.COST_COLUMN + " )\n"+
                 "VALUES (?, ?, ?);";
     }
 
     @Override
     public String getUpdateQuery() {
-        return "UPDATE INTO " + Projects.TABLE_NAME + " SET title = ?, cost = ?\n"+
+        return "UPDATE " + Projects.TABLE_NAME + " SET title = ?, cost = ?\n"+
                 "WHERE id = ?;";
     }
 
     @Override
     public String getDeleteQuery() {
-        return "DELETE FROM" + Projects.TABLE_NAME+"\n"+
-                "WHERE id = ?;";
+        return "DELETE FROM " + Projects.TABLE_NAME+"\n"+
+                "WHERE " + Projects.ID_COLUMN + " = ?;";
 
     }
     public String getDevelopersQuery() {
-        return "SELECT  d.fname, d.lname " +
-                "FROM project_developers pd INNER JOIN projects p ON pd.project_id = p.id" +
-                "INNER JOIN developers d ON pd.developer_id = d.id" +
+        return "SELECT d.id, d.fname, d.lname , d.salary " +
+                "FROM project_developers pd INNER JOIN projects p ON pd.project_id = p.id " +
+                "INNER JOIN developers d ON pd.developer_id = d.id " +
                 "WHERE p.id = ?";
     }
-
-    @Override
-    public Projects create() throws SQLException {
-        Projects projects = new Projects();
-        return insert(projects);
+    public String addDevelopersQuery(){
+        return "INSERT INTO project_developers (project_id, developer_id) VALUES (?, ?);";
     }
 
     @Override
@@ -99,7 +98,7 @@ public class ProjectsDAO extends AbstractDAO<Projects, Integer> {
         }
 
     }
-    private HashSet<Developers> showDevelopers(Projects projects) throws SQLException {
+    public Set<Developers> showDevelopers(Projects projects) throws SQLException {
         HashSet<Developers> developers;
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(getDevelopersQuery())){
@@ -108,11 +107,27 @@ public class ProjectsDAO extends AbstractDAO<Projects, Integer> {
             developers = new HashSet<>();
             while (resultSet.next()) {
                 Developers developer = new Developers();
+                developer.setId(resultSet.getInt(Developers.ID_COLUMN));
                 developer.setFname(resultSet.getString(Developers.FNAME_COLUMN));
                 developer.setLname(resultSet.getString(Developers.LNAME_COLUMN));
+                developer.setSalary(resultSet.getInt(Developers.SALARY_COLUMN));
                 developers.add(developer);
+                projects.setDevelopers(developers);
             }
         }
-        return developers;
+        return projects.getDevelopers();
+    }
+    public void addProjectDeveloper(Projects projects, Developers developers)throws SQLException{
+        try(Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(addDevelopersQuery())){
+            statement.setInt(1,projects.getId());
+            statement.setInt(2,developers.getId());
+            int count = statement.executeUpdate();
+            if (count != 1) {
+                throw new RuntimeException("On persist modify more then 1 record: " + count);
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 }

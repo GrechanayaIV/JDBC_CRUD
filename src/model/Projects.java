@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Projects implements IdentifiedTable<Integer> {
-    public static final String TABLE_NAME = "Projects";
+    public static final String TABLE_NAME = "projects";
     public static final String ID_COLUMN = "id";
     public static final String TITLE_COLUMN = "title";
     public static final String COST_COLUMN = "cost";
@@ -14,19 +14,24 @@ public class Projects implements IdentifiedTable<Integer> {
     private Integer id;
     private String title;
     private int cost;
-    private Companies company;
-    private Customers customer;
     private Set<Developers> developers = new HashSet<Developers>();
 
     public Projects() {
     }
 
-    public Projects(Integer id, String title, int cost, Companies company, Customers customer) {
+    public Projects(Integer id) {
+        this.id = id;
+    }
+
+    public Projects(Integer id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
+    public Projects(Integer id, String title, int cost) {
         this.id = id;
         this.title = title;
         this.cost = cost;
-        this.customer = customer;
-        this.company = company;
     }
 
     public Integer getId() {
@@ -41,6 +46,8 @@ public class Projects implements IdentifiedTable<Integer> {
         return title;
     }
 
+    public Set<Developers> getDevelopers() { return developers; }
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -53,10 +60,6 @@ public class Projects implements IdentifiedTable<Integer> {
         this.cost = cost;
     }
 
-    public Set<Developers> getDevelopers() {
-        return developers;
-    }
-
     public void setDevelopers(Set<Developers> developers) {
         this.developers = developers;
     }
@@ -66,9 +69,6 @@ public class Projects implements IdentifiedTable<Integer> {
         return "Projects:" +
                 "\nid = " + this.id + "," +
                 "\ntitle = " + this.title + "," +
-                "\ncost = " + this.cost +
-                ",\ncustomer = " + this.customer +
-                "'\ncompany = " + this.company +
-                ",\ndevelopers = " + developers;
+                "\ncost = " + this.cost;
     }
 }

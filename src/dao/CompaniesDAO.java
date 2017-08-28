@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class CompaniesDAO extends AbstractDAO<Companies, Integer>{
     private class PersistCompanies extends Companies{
@@ -24,38 +25,36 @@ public class CompaniesDAO extends AbstractDAO<Companies, Integer>{
     }
     @Override
     public String getSelectQuery() {
-        return "SELECT id, title FROM " + Companies.TABLE_NAME;
+        return "SELECT " + Companies.ID_COLUMN + ", " + Companies.TITLE_COLUMN + " FROM " + Companies.TABLE_NAME;
     }
 
     @Override
     public String getCreateQuery() {
-        return "INSERT INTO "+ Companies.TABLE_NAME+" ( id, title)\n"+
+        return "INSERT INTO "+ Companies.TABLE_NAME+" ( " + Companies.ID_COLUMN + ", " +
+                Companies.TITLE_COLUMN + ")\n"+
                 "VALUES (?, ?);";
     }
 
     @Override
     public String getUpdateQuery() {
-        return "UPDATE INTO " + Companies.TABLE_NAME + " SET title = ?\n"+
-                "WHERE id = ?;";
+        return "UPDATE " + Companies.TABLE_NAME + " SET " +Companies.TITLE_COLUMN + " = ?\n"+
+                "WHERE " + Companies.ID_COLUMN + " = ?;";
     }
 
     @Override
     public String getDeleteQuery() {
-        return "DELETE FROM" + Companies.TABLE_NAME+"\n"+
-                "WHERE id = ?;";
+        return "DELETE FROM " + Companies.TABLE_NAME+"\n"+
+                "WHERE " + Companies.ID_COLUMN + " = ?;";
 
     }
     public  String getProjectsQuery(){
-        return "SELECT  p.title\n" +
+        return "SELECT  p.id, p.title, p.cost\n" +
                 "FROM company_projects cp INNER JOIN companies c ON cp.company_id = c.id\n" +
                 "INNER JOIN projects p ON cp.project_id = p.id\n" +
                 "WHERE c.id = ?";
     }
-
-    @Override
-    public Companies create() throws SQLException {
-        Companies companies = new Companies();
-        return insert(companies);
+    public String addProjectsQuery(){
+        return "INSERT INTO company_projects (company_id, project_id) VALUES (?, ?);";
     }
 
     @Override
@@ -95,7 +94,7 @@ public class CompaniesDAO extends AbstractDAO<Companies, Integer>{
         }
 
     }
-    private HashSet<Projects> showProjects(Companies companies) throws SQLException {
+    public Set<Projects> showProjects(Companies companies) throws SQLException {
         HashSet<Projects> projects;
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(getProjectsQuery())){
@@ -104,10 +103,26 @@ public class CompaniesDAO extends AbstractDAO<Companies, Integer>{
             projects = new HashSet<>();
             while (resultSet.next()) {
                 Projects project = new Projects();
-                project.setTitle(resultSet.getString("title"));
+                project.setId(resultSet.getInt(Projects.ID_COLUMN));
+                project.setTitle(resultSet.getString(Projects.TITLE_COLUMN));
+                project.setCost(resultSet.getInt(Projects.COST_COLUMN));
                 projects.add(project);
+                companies.setProjects(projects);
             }
         }
-        return projects;
+        return companies.getProjects();
+    }
+    public void addCompanyProjects(Companies companies, Projects projects)throws SQLException{
+        try(Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(addProjectsQuery())){
+            statement.setInt(1,companies.getId());
+            statement.setInt(2,projects.getId());
+            int count = statement.executeUpdate();
+            if (count != 1) {
+                throw new RuntimeException("On persist modify more then 1 record: " + count);
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 }

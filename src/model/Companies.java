@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Companies implements IdentifiedTable<Integer> {
-    public static final String TABLE_NAME = "Companies";
+    public static final String TABLE_NAME = "companies";
     public static final String ID_COLUMN = "id";
     public static final String TITLE_COLUMN = "title";
 
@@ -15,6 +15,10 @@ public class Companies implements IdentifiedTable<Integer> {
     private Set<Projects> projects = new HashSet<Projects>();
 
     public Companies() {
+    }
+
+    public Companies(Integer id) {
+        this.id = id;
     }
 
     public Companies(Integer id, String title) {
@@ -46,8 +50,7 @@ public class Companies implements IdentifiedTable<Integer> {
     public String toString() {
         return "Coompanies:" +
                 "\nid = " + this.id +
-                ",\ntitle = " + this.title+
-                ",\nprojects = " + this.projects;
+                ",\ntitle = " + this.title;
     }
 
 }
