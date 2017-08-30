@@ -4,7 +4,6 @@ import Factory.FactoryDAO;
 import dao.SkillsDAO;
 import model.Skills;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -50,7 +49,7 @@ public class ControllerSkills {
                     getById();
                     break;
                 case 0:
-                    MainConsolHelper.mainManu();
+                    MainController.mainManu();
                     break;
 
             }

@@ -6,6 +6,7 @@ import model.Developers;
 import model.Projects;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 
 public class ControllerProjects {
@@ -59,7 +60,7 @@ public class ControllerProjects {
                     addProjectDeveloper();
                     break;
                 case 0:
-                    MainConsolHelper.mainManu();
+                    MainController.mainManu();
                     break;
 
             }

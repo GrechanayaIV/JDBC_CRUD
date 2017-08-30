@@ -60,7 +60,7 @@ public class ControllerCompanies {
                     addCompanyProject();
                     break;
                 case 0:
-                    MainConsolHelper.mainManu();
+                    MainController.mainManu();
                     break;
 
             }

@@ -59,7 +59,7 @@ public class ControllerDevelopers {
                     addDeveloperSkills();
                     break;
                 case 0:
-                    MainConsolHelper.mainManu();
+                    MainController.mainManu();
                     break;
 
             }

@@ -61,7 +61,7 @@ public class ControllerCustomers {
                     addCustomerProject();
                     break;
                 case 0:
-                    MainConsolHelper.mainManu();
+                    MainController.mainManu();
                     break;
 
             }

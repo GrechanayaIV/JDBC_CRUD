@@ -5,7 +5,7 @@ import Factory.FactoryDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class MainConsolHelper {
+public class MainController {
     public static void main(String[] args) throws SQLException, IOException {
         mainManu();
     }
